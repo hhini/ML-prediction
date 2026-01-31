@@ -8,6 +8,7 @@ class ModelService:
         self.model_dir = model_dir
         self.model = None
         self.model_loaded = False
+        self.load_error = None
         
         # 初始化时自动加载模型
         self.load_model()
@@ -31,17 +32,29 @@ class ModelService:
             return False
         
         try:
+            print(f"Attempting to load model from {model_file}")
             # 直接使用joblib加载模型
             self.model = joblib.load(model_file)
+            print(f"Raw model loaded. Type: {type(self.model)}")
             
             # 处理模型数据，如果是元组，尝试找到模型对象
             if isinstance(self.model, tuple):
-                for item in self.model:
-                    if hasattr(item, 'predict'):
-                        self.model = item
-                        break
+                print(f"Model is a tuple of length {len(self.model)}")
+                found_predict = False
+                for i, item in enumerate(self.model):
+                    print(f"Checking item {i}: type={type(item)}")
+                    try:
+                        if hasattr(item, 'predict'):
+                            print(f"Item {i} has 'predict' method.")
+                            self.model = item
+                            found_predict = True
+                            break
+                    except Exception as e:
+                        print(f"Error checking item {i}: {e}")
+                
                 # 如果没有找到，使用第一个元素
-                if isinstance(self.model, tuple):
+                if not found_predict and isinstance(self.model, tuple):
+                    print("No item with 'predict' found, using first element.")
                     self.model = self.model[0]
             
             self.model_loaded = True
@@ -94,5 +107,6 @@ class ModelService:
         return {
             'model_loaded': self.model_loaded,
             'model_file': model_file,
-            'model_type': type(self.model).__name__ if self.model else 'None'
+            'model_type': type(self.model).__name__ if self.model else 'None',
+            'load_error': self.load_error
         }

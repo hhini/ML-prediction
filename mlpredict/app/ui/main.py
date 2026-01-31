@@ -421,6 +421,9 @@ def main():
                         st.markdown('</div>', unsafe_allow_html=True)
                     else:
                         st.error("预测失败，请检查模型是否正确加载")
+                        model_info = model_service.get_model_info()
+                        if model_info.get('load_error'):
+                            st.error(f"详细错误: {model_info['load_error']}")
     
     # 页脚
     st.markdown('<footer style="text-align: center; margin-top: 3rem; color: #7f8c8d;">', unsafe_allow_html=True)
