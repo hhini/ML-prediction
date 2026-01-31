@@ -166,15 +166,28 @@ class ModelService:
     
     def predict(self, features: list) -> Optional[Any]:
         """使用模型进行预测"""
+        print("========================================")
+        print("        进行预测")
+        print("========================================")
+        print(f"当前模型加载状态: {self.model_loaded}")
+        print(f"当前模型: {self.model}")
+        print(f"输入特征: {features}")
+        
         if not self.model_loaded:
+            print("模型未加载，尝试加载...")
             if not self.load_model():
+                print("模型加载失败，无法进行预测")
                 return None
+        
+        print(f"模型加载状态: {self.model_loaded}")
+        print(f"模型类型: {type(self.model).__name__}")
+        print(f"模型是否有predict方法: {hasattr(self.model, 'predict')}")
         
         try:
             # 处理缺失值
-            # 这里可以根据模型的要求进行处理
-            # 例如，用0填充或使用其他策略
+            print("处理输入特征...")
             processed_features = [0 if f is None else f for f in features]
+            print(f"处理后的特征: {processed_features}")
             
             # 创建DataFrame，使用正确的列名
             feature_names = [
@@ -185,15 +198,28 @@ class ModelService:
                 '家中蔬菜的购买方式'
             ]
             
+            print(f"创建DataFrame，列名: {feature_names}")
             df = pd.DataFrame([processed_features], columns=feature_names)
+            print(f"创建的DataFrame:\n{df}")
             
             # 确保输入形状正确
+            print("使用模型进行预测...")
             if hasattr(self.model, 'predict_proba'):
                 # 对于分类模型，返回概率
-                return self.model.predict_proba(df)[0]
+                print("使用predict_proba方法...")
+                result = self.model.predict_proba(df)
+                print(f"预测结果: {result}")
+                print(f"预测结果类型: {type(result).__name__}")
+                print(f"预测结果形状: {result.shape}")
+                return result[0]
             else:
                 # 对于回归模型，返回预测值
-                return self.model.predict(df)[0]
+                print("使用predict方法...")
+                result = self.model.predict(df)
+                print(f"预测结果: {result}")
+                print(f"预测结果类型: {type(result).__name__}")
+                print(f"预测结果形状: {result.shape}")
+                return result[0]
         except Exception as e:
             print(f"Error during prediction: {e}")
             import traceback
