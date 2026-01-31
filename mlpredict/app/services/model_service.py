@@ -103,30 +103,46 @@ class ModelService:
     
     def load_model(self) -> bool:
         """加载模型文件"""
+        print("========================================")
+        print("        加载模型")
+        print("========================================")
+        
         model_file = self.find_model_file()
         
         if not model_file:
             print(f"No model file found in {self.model_dir}")
             return False
         
+        print(f"尝试加载模型文件: {model_file}")
+        print(f"文件是否存在: {os.path.exists(model_file)}")
+        print(f"文件大小: {os.path.getsize(model_file) if os.path.exists(model_file) else 'N/A'} bytes")
+        
         try:
             if model_file.endswith('.joblib'):
                 if joblib is None:
                     print("Error: joblib module not found. Cannot load .joblib files.")
                     return False
+                print("使用joblib加载模型...")
                 model_data = joblib.load(model_file)
+                print("使用joblib加载模型成功")
             else:
+                print("使用pickle加载模型...")
                 with open(model_file, 'rb') as f:
                     model_data = pickle.load(f)
+                print("使用pickle加载模型成功")
             
-            # 处理模型数据，如果是元组，尝试找到模型对象
+            print(f"模型数据类型: {type(model_data).__name__}")
+            
+            # 处理模型数据，如果是元组
             if isinstance(model_data, tuple):
                 print(f"模型数据是元组，长度: {len(model_data)}")
                 # 尝试找到具有predict方法的对象
-                for item in model_data:
+                for i, item in enumerate(model_data):
+                    print(f"元组元素 {i} 类型: {type(item).__name__}")
+                    print(f"是否有predict方法: {hasattr(item, 'predict')}")
                     if hasattr(item, 'predict'):
                         self.model = item
-                        print(f"从元组中找到模型对象: {type(item).__name__}")
+                        print(f"从元组中找到模型对象: {type(self.model).__name__}")
                         break
                 # 如果没有找到，使用第一个元素
                 if not self.model:
@@ -135,11 +151,12 @@ class ModelService:
             else:
                 self.model = model_data
             
-            self.model_loaded = True
-            print(f"Model loaded successfully from {model_file}")
             print(f"最终模型类型: {type(self.model).__name__}")
             print(f"模型是否有predict方法: {hasattr(self.model, 'predict')}")
             print(f"模型是否有predict_proba方法: {hasattr(self.model, 'predict_proba')}")
+            
+            self.model_loaded = True
+            print("模型加载成功！")
             return True
         except Exception as e:
             print(f"Error loading model: {e}")
