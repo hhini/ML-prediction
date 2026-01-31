@@ -1,6 +1,13 @@
 import os
 import pickle
-import joblib
+
+# 尝试导入joblib
+try:
+    import joblib
+except ImportError:
+    joblib = None
+    print("Warning: joblib module not found. Some model formats may not be supported.")
+
 import pandas as pd
 from typing import Optional, Any
 
@@ -30,26 +37,13 @@ class ModelService:
         
         try:
             if model_file.endswith('.joblib'):
-                model_data = joblib.load(model_file)
+                if joblib is None:
+                    print("Error: joblib module not found. Cannot load .joblib files.")
+                    return False
+                self.model = joblib.load(model_file)
             else:
                 with open(model_file, 'rb') as f:
-                    model_data = pickle.load(f)
-            
-            # 处理模型数据，如果是元组，尝试找到模型对象
-            if isinstance(model_data, tuple):
-                print(f"模型数据是元组，长度: {len(model_data)}")
-                # 尝试找到具有predict方法的对象
-                for item in model_data:
-                    if hasattr(item, 'predict'):
-                        self.model = item
-                        print(f"从元组中找到模型对象: {type(item).__name__}")
-                        break
-                # 如果没有找到，使用第一个元素
-                if not self.model:
-                    self.model = model_data[0]
-                    print(f"使用元组的第一个元素作为模型: {type(self.model).__name__}")
-            else:
-                self.model = model_data
+                    self.model = pickle.load(f)
             
             self.model_loaded = True
             print(f"Model loaded successfully from {model_file}")

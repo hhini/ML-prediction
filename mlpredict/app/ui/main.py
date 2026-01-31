@@ -2,11 +2,18 @@ import streamlit as st
 import os
 import sys
 
-# 添加项目根目录到Python路径
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-
-from mlpredict.app.services.feature_processor import FeatureProcessor
-from mlpredict.app.services.model_service import ModelService
+# 尝试导入必要的模块
+try:
+    # 添加项目根目录到Python路径
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+    
+    from mlpredict.app.services.feature_processor import FeatureProcessor
+    from mlpredict.app.services.model_service import ModelService
+    modules_loaded = True
+except ImportError as e:
+    modules_loaded = False
+    error_message = str(e)
+    print(f"Error loading modules: {error_message}")
 
 # 设置页面配置
 st.set_page_config(
@@ -215,16 +222,23 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 初始化服务
-feature_processor = FeatureProcessor()
-model_service = ModelService(model_dir=os.path.join(os.path.dirname(__file__), '..', '..', 'models'))
-
 # 主页面
 def main():
     # 页面标题
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
     st.markdown('<h1 class="title">幽门螺旋杆菌风险预测</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">基于个人生活习惯的幽门螺旋杆菌感染风险评估</p>', unsafe_allow_html=True)
+    
+    # 检查模块是否加载成功
+    if not modules_loaded:
+        st.error(f"应用启动失败，缺少必要的依赖模块：{error_message}")
+        st.info("请确保已安装所有必要的依赖：pip install -r requirements.txt")
+        st.markdown('</div>', unsafe_allow_html=True)
+        return
+    
+    # 初始化服务
+    feature_processor = FeatureProcessor()
+    model_service = ModelService(model_dir=os.path.join(os.path.dirname(__file__), '..', '..', 'models'))
     
     # 侧边栏信息
     with st.sidebar:
