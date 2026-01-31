@@ -34,7 +34,11 @@ class ModelService:
             os.path.join(os.path.dirname(__file__), '../../..', 'models'),
             os.path.join(os.path.dirname(__file__), '../../..', 'mlpredict', 'models'),
             os.path.join(os.path.abspath('.'), 'models'),
-            os.path.join(os.path.abspath('.'), 'mlpredict', 'models')
+            os.path.join(os.path.abspath('.'), 'mlpredict', 'models'),
+            # 添加当前文件目录作为备选
+            os.path.dirname(__file__),
+            os.path.join(os.path.dirname(__file__), '..', '..'),
+            os.path.join(os.path.dirname(__file__), '..', '..', 'ui')
         ]
         
         print("\n尝试不同的模型路径:")
@@ -52,6 +56,19 @@ class ModelService:
                     self.model_dir = abs_path
                     print(f"   选择此路径作为模型目录")
                     break
+        
+        # 最后尝试直接在当前工作目录查找模型文件
+        print("\n尝试直接在当前工作目录查找模型文件:")
+        current_work_dir = os.getcwd()
+        print(f"当前工作目录: {current_work_dir}")
+        
+        if os.path.exists(current_work_dir):
+            files = os.listdir(current_work_dir)
+            model_files = [f for f in files if any(f.endswith(ext) for ext in ['.pkl', '.pickle', '.joblib', '.model'])]
+            if model_files:
+                print(f"找到模型文件: {model_files}")
+                self.model_dir = current_work_dir
+                print(f"选择当前工作目录作为模型目录")
     
     def find_model_file(self) -> Optional[str]:
         """查找模型文件"""
