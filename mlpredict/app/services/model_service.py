@@ -8,6 +8,9 @@ class ModelService:
         self.model_dir = model_dir
         self.model = None
         self.model_loaded = False
+        
+        # 初始化时自动加载模型
+        self.load_model()
     
     def find_model_file(self) -> Optional[str]:
         """查找模型文件"""
