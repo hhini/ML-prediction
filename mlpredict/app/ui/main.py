@@ -237,8 +237,27 @@ def main():
         return
     
     # 初始化服务
+    print("========================================")
+    print("        初始化服务")
+    print("========================================")
+    
+    # 获取绝对路径
+    current_dir = os.path.dirname(__file__)
+    project_root = os.path.abspath(os.path.join(current_dir, '../../..'))
+    models_dir = os.path.join(project_root, 'mlpredict', 'models')
+    
+    print(f"当前文件目录: {current_dir}")
+    print(f"项目根目录: {project_root}")
+    print(f"模型目录: {models_dir}")
+    print(f"模型目录是否存在: {os.path.exists(models_dir)}")
+    
+    if os.path.exists(models_dir):
+        print(f"模型目录中的文件: {os.listdir(models_dir)}")
+    else:
+        print("警告: 模型目录不存在！")
+    
     feature_processor = FeatureProcessor()
-    model_service = ModelService(model_dir=os.path.join(os.path.dirname(__file__), '..', '..', 'models'))
+    model_service = ModelService(model_dir=models_dir)
     
     # 侧边栏信息
     with st.sidebar:
