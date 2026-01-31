@@ -16,16 +16,73 @@ class ModelService:
         self.model_dir = model_dir
         self.model = None
         self.model_loaded = False
+        
+        print("========================================")
+        print("        初始化ModelService")
+        print("========================================")
+        print(f"初始模型目录: {model_dir}")
+        print(f"初始模型目录是否存在: {os.path.exists(model_dir)}")
+        
+        # 尝试查找模型目录
+        self.find_valid_model_dir()
+    
+    def find_valid_model_dir(self):
+        """尝试查找有效的模型目录"""
+        # 尝试不同的模型路径
+        possible_model_dirs = [
+            self.model_dir,
+            os.path.join(os.path.dirname(__file__), '../../..', 'models'),
+            os.path.join(os.path.dirname(__file__), '../../..', 'mlpredict', 'models'),
+            os.path.join(os.path.abspath('.'), 'models'),
+            os.path.join(os.path.abspath('.'), 'mlpredict', 'models')
+        ]
+        
+        print("\n尝试不同的模型路径:")
+        for i, path in enumerate(possible_model_dirs):
+            abs_path = os.path.abspath(path)
+            exists = os.path.exists(abs_path)
+            print(f"{i+1}. {abs_path} - {'存在' if exists else '不存在'}")
+            
+            if exists and os.path.isdir(abs_path):
+                # 检查是否有模型文件
+                files = os.listdir(abs_path)
+                model_files = [f for f in files if any(f.endswith(ext) for ext in ['.pkl', '.pickle', '.joblib', '.model'])]
+                if model_files:
+                    print(f"   找到模型文件: {model_files}")
+                    self.model_dir = abs_path
+                    print(f"   选择此路径作为模型目录")
+                    break
     
     def find_model_file(self) -> Optional[str]:
         """查找模型文件"""
-        model_extensions = ['.pkl', '.pickle', '.joblib', '.model']
+        print("========================================")
+        print("        查找模型文件")
+        print("========================================")
+        print(f"当前模型目录: {self.model_dir}")
+        print(f"目录是否存在: {os.path.exists(self.model_dir)}")
         
-        for file in os.listdir(self.model_dir):
-            if any(file.endswith(ext) for ext in model_extensions):
-                return os.path.join(self.model_dir, file)
+        if not os.path.exists(self.model_dir):
+            print(f"Error: 模型目录不存在: {self.model_dir}")
+            return None
         
-        return None
+        try:
+            model_extensions = ['.pkl', '.pickle', '.joblib', '.model']
+            files = os.listdir(self.model_dir)
+            print(f"目录中的文件: {files}")
+            
+            for file in files:
+                if any(file.endswith(ext) for ext in model_extensions):
+                    model_file = os.path.join(self.model_dir, file)
+                    print(f"找到模型文件: {model_file}")
+                    return model_file
+            
+            print("Error: 未找到模型文件")
+            return None
+        except Exception as e:
+            print(f"Error listing directory: {e}")
+            import traceback
+            traceback.print_exc()
+            return None
     
     def load_model(self) -> bool:
         """加载模型文件"""
