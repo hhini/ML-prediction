@@ -26,198 +26,132 @@ st.set_page_config(
 # 自定义CSS
 st.markdown("""
 <style>
+    /* 引入字体 */
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    
+    * {
+        font-family: 'Noto+Sans+SC', sans-serif;
+    }
+
     /* 主容器样式 */
     .main-container {
-        max-width: 1200px;
+        max-width: 1000px;
         margin: 0 auto;
-        padding: 2rem;
+        padding: 2rem 1rem;
     }
     
     /* 标题样式 */
     .title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #2d5a8c;
+        font-size: 3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         text-align: center;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: -1px;
     }
     
     /* 副标题样式 */
     .subtitle {
-        font-size: 1.2rem;
-        color: #6c757d;
+        font-size: 1.1rem;
+        color: #64748b;
         text-align: center;
         margin-bottom: 3rem;
     }
     
-    /* 卡片样式 */
+    /* 卡片通用样式 */
     .card {
-        background-color: white;
-        border-radius: 16px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        padding: 2.5rem;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 24px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+        padding: 2rem;
         margin-bottom: 2rem;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
     .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #3b82f6;
     }
     
-    /* 表单样式 */
-    .form-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+    /* 侧边栏样式定制 */
+    [data-testid="stSidebar"] {
+        background-color: #f8fafc;
+        border-right: 1px solid #e2e8f0;
     }
     
-    /* 按钮样式 */
+    .sidebar-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* 按钮美化 */
     .stButton > button {
-        background-color: #3498db;
+        width: 100%;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         color: white;
         border: none;
-        border-radius: 12px;
-        padding: 1rem 3rem;
+        border-radius: 16px;
+        padding: 0.8rem 2rem;
         font-size: 1.1rem;
         font-weight: 600;
-        cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
     }
     
     .stButton > button:hover {
-        background-color: #2980b9;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(52, 152, 219, 0.4);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        transform: scale(1.02);
+        box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5);
     }
-    
-    /* 结果卡片样式 */
-    .result-card {
-        background-color: #f8f9fa;
-        border-radius: 16px;
-        padding: 2.5rem;
-        margin-top: 2rem;
-        border-left: 6px solid #3498db;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    }
-    
-    /* 结果标题样式 */
-    .result-title {
-        font-size: 1.6rem;
-        font-weight: 600;
-        color: #2d5a8c;
-        margin-bottom: 1.5rem;
-    }
-    
-    /* 结果值样式 */
-    .result-value {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #3498db;
-        margin-bottom: 1.5rem;
-    }
-    
-    /* 结果值样式 - 阳性 */
-    .result-value-positive {
-        color: #e74c3c;
-    }
-    
-    /* 结果值样式 - 阴性 */
-    .result-value-negative {
-        color: #27ae60;
-    }
-    
-    /* 说明文本样式 */
-    .info-text {
-        font-size: 0.95rem;
-        color: #6c757d;
-        margin-top: 1rem;
-        line-height: 1.6;
-    }
-    
-    /* 侧边栏样式 */
-    .sidebar {
-        background-color: #f8f9fa;
-        border-radius: 16px;
-        padding: 2rem;
-        margin-right: 1rem;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    }
-    
-    /* 侧边栏标题 */
-    .sidebar h2 {
-        color: #2d5a8c;
-        margin-bottom: 1.5rem;
-    }
-    
-    /* 侧边栏内容 */
-    .sidebar-content {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: #495057;
-    }
-    
-    /* 预防建议样式 */
-    .prevention-tips {
-        background-color: #e3f2fd;
+
+    /* 风险仪表盘 */
+    .risk-meter-container {
+        position: relative;
+        height: 24px;
+        background: #e2e8f0;
         border-radius: 12px;
-        padding: 1.5rem;
-        margin-top: 2rem;
-        border-left: 4px solid #2196f3;
+        overflow: hidden;
+        margin: 2rem 0;
     }
     
-    .prevention-tips h4 {
-        color: #1976d2;
-        margin-bottom: 1rem;
+    .risk-meter-fill {
+        height: 100%;
+        transition: width 1.5s cubic-bezier(0.1, 0, 0.1, 1);
+        background: linear-gradient(90deg, #22c55e 0%, #eab308 50%, #ef4444 100%);
+    }
+
+    .risk-label-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* 动画效果 */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
     
-    .prevention-tips ul {
-        margin-left: 1.5rem;
-        color: #37474f;
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out forwards;
     }
-    
-    /* 加载动画样式 */
-    .loader {
-        display: inline-block;
-        width: 50px;
-        height: 50px;
-        border: 3px solid rgba(52, 152, 219, 0.3);
-        border-radius: 50%;
-        border-top-color: #3498db;
-        animation: spin 1s ease-in-out infinite;
-    }
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-    
-    /* 特征标签样式 */
-    .feature-label {
-        font-weight: 600;
-        color: #495057;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* 选择框样式 */
-    .stSelectbox > div {
-        border-radius: 8px;
-    }
-    
+
     /* 响应式调整 */
-    @media (max-width: 768px) {
-        .main-container {
-            padding: 1rem;
-        }
-        
-        .card {
-            padding: 1.5rem;
-        }
-        
-        .result-card {
-            padding: 1.5rem;
-        }
+    @media (max-width: 640px) {
+        .title { font-size: 2rem; }
+        .card { padding: 1.5rem; }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -226,8 +160,16 @@ st.markdown("""
 def main():
     # 页面标题
     st.markdown('<div class="main-container">', unsafe_allow_html=True)
-    st.markdown('<h1 class="title">幽门螺旋杆菌风险预测</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">基于个人生活习惯的幽门螺旋杆菌感染风险评估</p>', unsafe_allow_html=True)
+    
+    # 顶部 Hero 区域
+    col_logo, col_title = st.columns([1, 4])
+    with col_logo:
+        # 这里可以放置 logo
+        st.markdown('<div style="display: flex; justify-content: center; align-items: center; height: 100px; font-size: 50px;">🦠</div>', unsafe_allow_html=True)
+        # 如果有图片，可以使用 st.image("logo.png")
+    with col_title:
+        st.markdown('<h1 class="title">幽门螺旋杆菌风险预测</h1>', unsafe_allow_html=True)
+        st.markdown('<p class="subtitle">专业的 AI 辅助健康评估系统，关注您的胃部健康</p>', unsafe_allow_html=True)
     
     # 检查模块是否加载成功
     if not modules_loaded:
@@ -261,25 +203,33 @@ def main():
     
     # 侧边栏信息
     with st.sidebar:
-        st.markdown('<div class="sidebar">', unsafe_allow_html=True)
-        st.header("关于系统")
-        st.write("本系统基于个人生活习惯数据，预测幽门螺旋杆菌感染风险水平。")
-        st.write("请填写以下特征信息，系统将为您提供预测结果。")
+        st.markdown('<div class="sidebar-header">🦠 关于系统</div>', unsafe_allow_html=True)
+        st.write("本系统基于个人生活习惯数据，通过机器学习算法预测**幽门螺旋杆菌**感染风险水平。")
+        
+        with st.expander("📌 系统说明", expanded=True):
+            st.info("请如实填写右侧的特征信息，系统将为您提供实时的预测结果。")
         
         # 模型信息
         model_info = model_service.get_model_info()
-        st.subheader("模型信息")
-        st.write(f"模型加载状态: {'已加载' if model_info['model_loaded'] else '未加载'}")
-        if model_info['model_file']:
-            st.write(f"模型文件: {os.path.basename(model_info['model_file'])}")
-        st.write(f"模型类型: {model_info['model_type']}")
+        with st.expander("🤖 模型信息", expanded=False):
+            st.write(f"**加载状态:** {'✅ 已就绪' if model_info['model_loaded'] else '❌ 未加载'}")
+            if model_info['model_file']:
+                st.write(f"**模型文件:** `{os.path.basename(model_info['model_file'])}`")
+            st.write(f"**算法类型:** `{model_info['model_type']}`")
+            if not model_info['model_loaded'] and model_info.get('load_error'):
+                st.error(f"加载错误: {model_info['load_error']}")
         
         # 幽门螺旋杆菌知识
-        st.subheader("幽门螺旋杆菌知识")
-        st.write("幽门螺旋杆菌是一种常见的胃肠道细菌，可引起胃炎、胃溃疡等疾病。")
-        st.write("主要通过口-口、粪-口途径传播，与卫生习惯密切相关。")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
+        with st.expander("📚 医学知识", expanded=True):
+            st.markdown("""
+            **幽门螺旋杆菌 (Hp)** 是一种常见的胃肠道细菌，与以下疾病密切相关：
+            - 慢性胃炎
+            - 胃溃疡 / 十二指肠溃疡
+            - 胃癌风险增加
+            
+            **传播途径：**
+            主要通过“口-口”或“粪-口”途径传播。
+            """)
     
     # 主内容区
     with st.container():
@@ -356,68 +306,70 @@ def main():
                     
                     # 展示结果
                     if prediction is not None:
-                        st.markdown('<div class="card">', unsafe_allow_html=True)
-                        st.header("预测结果")
+                        st.markdown('<div class="card animate-fade-in">', unsafe_allow_html=True)
+                        st.markdown('<h2 style="text-align: center; color: #1e293b; margin-bottom: 1.5rem;">🎯 风险评估报告</h2>', unsafe_allow_html=True)
                         
-                        # 根据预测结果类型展示
+                        # 获取阳性概率
                         if isinstance(prediction, list) or (hasattr(prediction, '__len__') and len(prediction) > 1):
-                            # 分类模型结果
-                            st.markdown('<div class="result-card">', unsafe_allow_html=True)
-                            st.markdown('<h3 class="result-title">感染概率</h3>', unsafe_allow_html=True)
-                            
-                            # 假设第一个概率是阴性，第二个是阳性
-                            if len(prediction) >= 2:
-                                negative_prob = float(prediction[0])
-                                positive_prob = float(prediction[1])
-                                
-                                # 显示阴性概率
-                                st.markdown(f'<p class="result-value result-value-negative">阴性概率: {negative_prob:.4f}</p>', unsafe_allow_html=True)
-                                # 显示阳性概率
-                                st.markdown(f'<p class="result-value result-value-positive">阳性概率: {positive_prob:.4f}</p>', unsafe_allow_html=True)
-                                
-                                # 显示最终结果
-                                if positive_prob > negative_prob:
-                                    st.markdown('<p class="result-value result-value-positive">最终结果: 阳性</p>', unsafe_allow_html=True)
-                                else:
-                                    st.markdown('<p class="result-value result-value-negative">最终结果: 阴性</p>', unsafe_allow_html=True)
-                            else:
-                                # 显示所有概率
-                                for i, prob in enumerate(prediction):
-                                    st.markdown(f'<p class="result-value">类别 {i}: {float(prob):.4f}</p>', unsafe_allow_html=True)
-                            
-                            st.markdown('</div>', unsafe_allow_html=True)
+                            risk_score = float(prediction[1])
                         else:
-                            # 回归模型结果
-                            st.markdown('<div class="result-card">', unsafe_allow_html=True)
-                            st.markdown('<h3 class="result-title">风险评分</h3>', unsafe_allow_html=True)
-                            # 处理数组或标量
-                            if hasattr(prediction, '__len__') and len(prediction) == 1:
-                                prediction_value = float(prediction[0])
-                            else:
-                                prediction_value = float(prediction)
-                            
-                            # 根据评分显示结果
-                            if prediction_value > 0.5:
-                                st.markdown(f'<p class="result-value result-value-positive">{prediction_value:.4f} (阳性)</p>', unsafe_allow_html=True)
-                            else:
-                                st.markdown(f'<p class="result-value result-value-negative">{prediction_value:.4f} (阴性)</p>', unsafe_allow_html=True)
-                            
-                            st.markdown('</div>', unsafe_allow_html=True)
+                            risk_score = float(prediction)
                         
+                        # 风险等级判定
+                        if risk_score < 0.3:
+                            risk_level = "低风险"
+                            risk_color = "#22c55e"
+                            risk_desc = "您的生活习惯良好，感染风险较低。请继续保持！"
+                        elif risk_score < 0.7:
+                            risk_level = "中等风险"
+                            risk_color = "#eab308"
+                            risk_desc = "存在一定的感染风险。建议改善卫生习惯，并关注胃部状况。"
+                        else:
+                            risk_level = "高风险"
+                            risk_color = "#ef4444"
+                            risk_desc = "感染风险较高！建议及时去医院进行 C13/C14 呼气试验筛查。"
+
+                        # 可视化仪表盘
+                        st.markdown(f"""
+                        <div style="text-align: center; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.2rem; color: #64748b;">风险概率: </span>
+                            <span style="font-size: 2.5rem; font-weight: 800; color: {risk_color};">{risk_score*100:.1f}%</span>
+                        </div>
+                        <div class="risk-meter-container">
+                            <div class="risk-meter-fill" style="width: {risk_score*100}%; background: {risk_color};"></div>
+                        </div>
+                        <div class="risk-label-container">
+                            <span>低风险</span>
+                            <span>中等风险</span>
+                            <span>高风险</span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # 风险结论卡片
+                        st.markdown(f"""
+                        <div style="background: {risk_color}15; border-radius: 16px; padding: 1.5rem; border: 1px solid {risk_color}30; margin-top: 1rem;">
+                            <h3 style="color: {risk_color}; margin-top: 0;">评估结果：{risk_level}</h3>
+                            <p style="color: #334155; margin-bottom: 0;">{risk_desc}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+
                         # 预防建议
                         st.markdown('<div class="prevention-tips">', unsafe_allow_html=True)
-                        st.subheader("预防建议")
-                        st.write("1. 保持良好的个人卫生习惯，勤洗手")
-                        st.write("2. 使用马桶时，养成盖马桶盖的习惯")
-                        st.write("3. 确保家庭厕所卫生，定期清洁")
-                        st.write("4. 注意饮食卫生，蔬菜洗净后食用")
-                        st.write("5. 减少零食摄入，保持健康饮食")
-                        st.write("6. 分餐制，避免交叉感染")
-                        st.write("7. 定期体检，早发现早治疗")
+                        st.markdown('<h4>💡 专家预防建议</h4>', unsafe_allow_html=True)
+                        col_a, col_b = st.columns(2)
+                        with col_a:
+                            st.write("✅ **个人卫生**")
+                            st.write("- 饭前便后勤洗手")
+                            st.write("- 建议使用公筷公勺")
+                            st.write("- 定期更换牙刷")
+                        with col_b:
+                            st.write("🥗 **饮食习惯**")
+                            st.write("- 减少生食摄入")
+                            st.write("- 蔬菜水果洗净削皮")
+                            st.write("- 避免共用餐具")
                         st.markdown('</div>', unsafe_allow_html=True)
                         
-                        # 结果说明
-                        st.markdown('<p class="info-text">注: 预测结果仅供参考，不构成医疗建议。如有健康问题，请咨询专业医生。</p>', unsafe_allow_html=True)
+                        st.markdown('<p class="info-text" style="text-align: center;">⚠️ 注: 本评估基于统计模型，结果仅供参考。如有不适请务必咨询专业医师。</p>', unsafe_allow_html=True)
                         st.markdown('</div>', unsafe_allow_html=True)
                     else:
                         st.error("预测失败，请检查模型是否正确加载")
